@@ -18,7 +18,6 @@
 
 [Docker实验室，可以免费使用docker，无需环境准备](https://labs.play-with-docker.com/)
 
-
 ## Internet Of Things
 
 [The Internet of Things presents – #LikeABosch](https://www.youtube.com/watch?v=v2kV6pgJxuo)
@@ -41,6 +40,12 @@
 
 [Database design playlist from caleb curry (50+)](https://www.youtube.com/watch?v=1D_h-yFtQVo&list=PL_c9BZzLwBRK0Pc28IdvPQizD2mJlgoID&index=9&t=0s)
 
+## ER Diagram
+
+[How to draw ER diagram](https://www.youtube.com/watch?v=F_xDqBa5w-s)
+
+> 评价：我的数据库ER图设计入门视频，强烈推荐，还有配套的PPT！
+
 ## REST
 
 [REST API concepts and examples](https://www.youtube.com/watch?v=7YcW25PHnAA)
@@ -59,5 +64,8 @@
 
 [How to: Work at Google — Example Coding/Engineering Interview](https://www.youtube.com/watch?v=XKu_SEDAykw)
 
+## Heroku
 
+[Introduction to Heroku](https://www.youtube.com/watch?v=QTOkqzCTGxw)
 
+> 评价：我的Heroku入门视频，强烈推荐，讲的非常好！ 
