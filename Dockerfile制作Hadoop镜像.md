@@ -37,10 +37,7 @@ docker build -t zhushengdocker/centos6-ssh .
 ```
 
 镜像列表如下图所示：
-
-```bash
 ![image](https://raw.githubusercontent.com/zhusheng/blog/master/docker/12.png)
-```
 
 ## 制作jdk镜像
 
@@ -64,10 +61,7 @@ docker build -t zhushengdocker/centos6-jdk .
 ```
 
 镜像列表如下图所示：
-
-```bash
 ![image](https://raw.githubusercontent.com/zhusheng/blog/master/docker/13.png)
-```
 
 ## 制作hadoop镜像
 
@@ -93,7 +87,4 @@ docker build -t zhushengdocker/centos6-hadoop .
 ```
 
 镜像列表如下图所示：
-
-```bash
 ![image](https://raw.githubusercontent.com/zhusheng/blog/master/docker/14.png)
-```
