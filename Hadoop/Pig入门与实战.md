@@ -78,6 +78,7 @@ STORE max_records INTO '/home/zhusheng/result.txt' USING PigStorage();
 ### 语法示例
 
 **示例1:Hadoop权威指南Pig示例**
+
 ![image](https://raw.githubusercontent.com/zhusheng/blog/master/75.png)
 
 上面的示例代码一共有5条pig语句，用分号区分。
@@ -130,6 +131,7 @@ pig -x local
 ```bash
 PIG_CLASSPATH = /huatec/hadoop-2.7.3/conf
 ```
+
 ![image](https://raw.githubusercontent.com/zhusheng/blog/master/77.png)
 
 第二步：修改hosts
@@ -168,3 +170,173 @@ pig /home/zhusheng/student.pig
 3、嵌入式
 
 略
+
+## Pig实战
+
+### 示例1-分步骤执行
+
+第一步：拷贝数据到Pig
+
+```bash
+grunt> copyFromLocal /home/zhusheng/student.txt student.txt
+```
+
+效果图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/79.png)
+
+第二步：加载数据
+
+```bash
+grunt> A =LOAD 'student.txt' USING PigStorage(',') AS (id:int, name, email, score:int);
+```
+
+效果图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/80.png)
+
+第三步：取出所需属性
+
+```bash
+grunt> B = FOREACH A GENERATE name,score;
+```
+
+效果图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/81.png)
+
+第四步：去除重复的记录
+
+```bash
+grunt> C = DISTINCT B;
+```
+
+效果图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/82.png)
+
+第五步：分组
+
+```bash
+grunt> D = FOREACH ( GROUP C BY name ) GENERATE group AS name, COUNT(C);
+grunt> E = FOREACH ( GROUP C BY name ) GENERATE group AS name, SUM(C.score);
+grunt> F = GROUP C By name;
+```
+
+效果图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/83.png)
+
+第六步：输出到屏幕
+
+```bash
+grunt> DUMP D;
+```
+
+这将会执行MapReduce任务，运行结果如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/84.png)
+
+第七步：保存结果到文件
+
+```bash
+STORE F INTO '/home/zhusheng/student.rel' USING PigStorage();
+```
+
+我本以为结果会保存在Linux上，所以给了一个Linux路径，结果保存到了HDFS上，我在HDFS上找到了它。
+
+效果图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/85.png)
+
+### 示例2:Pig脚本
+
+我们将grunt语句写到pig脚本文件`student.pig`中
+
+```bash
+A =LOAD 'student.txt' USING PigStorage(',') AS (id:int, name, email, score:int);
+B = FOREACH A GENERATE name,score;
+C = DISTINCT B;
+D = FOREACH ( GROUP C BY name ) GENERATE group AS name, COUNT(C);
+E = FOREACH ( GROUP C BY name ) GENERATE group AS name, SUM(C.score);
+F = GROUP C By name;
+
+STORE D INTO '/student.rel-d' USING PigStorage();
+STORE E INTO '/student.rel-e' USING PigStorage();
+STORE F INTO '/student.rel-f' USING PigStorage();
+```
+
+截图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/86.png)
+
+执行脚本
+
+```bash
+pig student.pig
+```
+
+查看结果
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/87.png)
+
+
+## Pig DUMP异常
+
+在执行Pig DUMP指令时出现了如下异常信息
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/88.png)
+
+DUMP指令会将语句转换成MapReduce任务执行。
+
+- 异常分析
+
+10020端口连接异常
+
+- 解决方法
+
+参考文章：http://www.linuxidc.com/Linux/2015-02/113645.htm
+
+我们在huatec01的配置文件map-site.xml中增加如下信息：
+
+```bash
+<property>
+    <name>mapreduce.jobhistory.address</name>
+    <value>0.0.0.0:10020</value>
+</property>
+<property>
+    <name>mapreduce.jobhistory.webapp.address</name>
+    <value>0.0.0.0:19888</value>
+</property>
+```
+
+截图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/89.png)
+
+配置完成后，在当前节点手动启动historyserver，也就是历史服务器
+
+```bash
+mr-jobhistory-daemon.sh  start historyserver
+```
+
+启动完成之后，我们会发现多了一个进程,截图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/90.png)
+
+再次执行DUMP指令，会发现异常消失。
+
+## 拓展
+
+10020是历史服务器端口，19888是历史服务器的历史任务UI端口，我们在上面配置了， 可以在浏览器直接查看，截图如下：
+
+![image](https://raw.githubusercontent.com/zhusheng/blog/master/91.png)
+
+从图中，我们可以看到所有的历史Job信息，历史Job的数量可以通过修改配置文件`map-site.xml`进行配置。
+
+```bash
+<property>
+    <name>mapreduce.jobhistory.joblist.cache.size</name>
+    <value>20000</value>
+</property>
+```
