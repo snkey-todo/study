@@ -77,4 +77,3 @@ workon hello_virtualenv
 ```bash
 deactivate
 ```
-
