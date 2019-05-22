@@ -28,15 +28,19 @@
 
 6. 安装Hbase集群。hbase底层需要依赖hadoop集群，01、02负责HMaster并组成高可用，03、04、05负责HRegionServer。
 
-## 安装虚拟机
+## 开始安装
 
-过程略。
+### 安装虚拟机
 
-### 第一步：配置固定ip
+过程略
+
+### 克隆虚拟机并准备环境
+
+#### 配置固定ip
 
 编辑网络配置文件`vi /etc/sysconfig/network-scripts/ifcfg-enp0s3`，编辑内容如下：
 
-```bash
+```
     BOOTPROTO=static
     ONBOOT=yes
     IPADDR=192.168.31.11
@@ -47,7 +51,7 @@
 
 重启网卡
 
-```bash
+```
      systemctl restart network
 ```
 
@@ -55,21 +59,21 @@
 
 如果还是不行，配置`/etc/resolv.conf`
 
-```bash
+```
     nameserver 8.8.8.8
 ```
 
-### 第二步：修改主机名
+#### 修改主机名
 
-```bash
+```
     hostnamectl set-hostname huatec01
 ```
 
-### 第三步：配置主机名和ip映射关系
+#### 配置主机名和ip映射关系
 
 `vi /etc/hosts`增加内容
 
-```bash
+```
     192.168.31.11    huatec01
     192.168.31.12    huatec02
     192.168.31.13    huatec03
@@ -79,7 +83,7 @@
 
 在本机也配置上述映射关系。
 
-### 第四步：关闭防火墙
+#### 关闭防火墙
 
 centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
@@ -89,13 +93,13 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 永久：`vi /etc/sysconfig/selinux`
 
-```bash
+```
     SELINUX=disabled
 ```
 
 2、firewalld
 
-```bash
+```
     systemctl stop firewalld
     systemctl disable firewalld
     systemctl status firewalld
@@ -105,13 +109,13 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 不关闭selinux防火墙我的集群一样都启动成功，所以第一步可以略过。
 
-### 第五步：配置ssh免登录
+#### 配置ssh免登录
 
 分别执行`ssh-keygen -t rsa`生成密钥，然后制作`authorized_keys`文件
 
 在huatec01上执行如下指令，制作`/root/.ssh/authorized_keys`文件。
 
-```bash
+```
     cat ~/.ssh/id_rsa.pub>> ~/.ssh/authorized_keys
     ssh huatec02 cat ~/.ssh/id_rsa.pub>> ~/.ssh/authorized_keys
     ssh huatec03 cat ~/.ssh/id_rsa.pub>> ~/.ssh/authorized_keys
@@ -121,15 +125,15 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 在其它节点上执行，将huatec01下的`authorized_keys`文件拷贝过来。
 
-```bash
+```
     ssh huatec01 cat ~/.ssh/authorized_keys>> ~/.ssh/authorized_keys
 ```
 
-## 安装jdk8
+### 安装jdk8
 
 首先解压安装jdk
 
-```bash
+```
     mkdir /usr/local/java
     tar -xvf /home/zhusheng/jdk-7u80-linux-x64.tar -C /usr/local/java/
 ```
@@ -138,7 +142,7 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 `vi /etc/profile`增加如下内容
 
-```bash
+```
     # jdk8
     JAVA_HOME=/usr/local/java/jdk1.7.0_80
     PATH=$JAVA_HOME/bin:$PATH
@@ -147,24 +151,24 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 执行`source /etc/profile`应用配置，然后执行`java -version`检测是否安装成功。
 
-## 安装Zookeeper集群
-
-### 安装和配置zookeeper
+### 安装Zookeeper集群
 
 在本机上下载zookeeper安装包，解压并修改相关配置文件，然后配置完成的目录拷贝到03、04、05，并配置环境变量。
 
 安装目录为/huatec，后续与大数据相关的软件都安装到这里。
 
+#### 配置zookeeper
+
 `zoo.cfg`配置文件默认不存在，但是给了示例文件，我们可以将示例文件改为zoo.cfg
 
-```bash
+```
     cd /huatec/zookeeper-3.4.5/conf
     mv zoo_sample.cfg zoo.cfg
 ```
 
  然后编辑`zoo.cfg`，修改内容如下，主要修改了数据缓存目录，并增加了集群信息，其它默认即可。
 
-```bash
+```
     dataDir=/huatec/zookeeper-3.4.5/tmp
     ...
     server.1=huatec03:2888:3888
@@ -178,11 +182,11 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
      scp -r zookeeper-3.4.5 root@huatec01:/huatec
 
-### 配置Zookeeper环境变量
+#### 配置环境变量
 
 在huatec01上对zookeeper配置环境变量
 
-```bash
+```
     # zookeeper3.4.5
     export ZOOKEEPER_HOME=/huatec/zookeeper-3.4.5
     export PATH=$PATH:$ZOOKEEPER_HOME/bin
@@ -190,41 +194,41 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 执行`source /etc/profile`使配置生效。
 
-### 启动zookeeper集群
+#### 启动zookeeper集群
 
 在03、04、05三个节点上分别执行
 
-```bash
+```
     zkServer.sh start
     zkServer.sh status
 ```
 
 我们查看huatec01的启动结果，效果如下：
 
-![enter image description here](https://raw.githubusercontent.com/zhusheng/blog/master/25.png)
+![25.png](https://upload-images.jianshu.io/upload_images/5637154-8bcd0fc5984e4fbd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 三个节点中有1个为leader，2个为follower。
 
 如果出现`Error contacting service. It is probably not running.`异常信息，请参考如下链接：
 `http://blog.csdn.net/xiewendong93/article/details/50500471`
 
-## 安装Hadoop集群
+### 安装Hadoop集群
 
 首先在本机上解压hadoop，修改相关配置信息，然后将其拷贝到`所有节点`上。
 
-### 修改Hadoop配置文件
+#### 修改配置文件
 
 修改配置文件：
 
 - hadoop-env.sh，配置hadoop运行所依赖的jdk环境变量。
 
-```bash
+```
  export JAVA_HOME=/usr/local/java/jdk1.7.0_80
 ```
 
 - core-site.xml
 
-```bash
+```
 <configuration>
     <!-- 指定hdfs的nameservice为ns1 -->
     <property>
@@ -246,7 +250,7 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 - hdfs-site.xml
 
-```bash
+```
 <configuration>
     <!--指定hdfs的nameservice为ns1，需要和core-site.xml中的保持一致 -->
     <property>
@@ -319,9 +323,9 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 </configuration>
 ```
 
-- mapred-site.xml
+4. mapred-site.xml
 
-```bash
+```
 <configuration>
 	<!-- 指定mr框架为yarn方式 -->
 	<property>
@@ -332,9 +336,9 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 ```
 
-- yarn-site.xml
+5. yarn-site.xml
 
-```bash
+```
 <configuration>
 	<!-- 开启RM高可靠 -->
 	<property>
@@ -373,7 +377,7 @@ centos 7关闭防火墙的步骤如下，配置完`reboot`系统sh生效。
 
 ```
 
-- slaves
+6. slaves
 
 ```
 huatec03
@@ -381,9 +385,11 @@ huatec04
 huatec05
 ```
 
-然后将数据拷贝到所有节点。
 
-```bash
+然后将数据拷贝到所有节点
+
+
+```
 scp -r hadoop-2.7.3 root@huatec01:/huatec
 scp -r hadoop-2.7.3 root@huatec02:/huatec
 scp -r hadoop-2.7.3 root@huatec03:/huatec
@@ -391,38 +397,36 @@ scp -r hadoop-2.7.3 root@huatec04:/huatec
 scp -r hadoop-2.7.3 root@huatec05:/huatec
 ```
 
-### 配置Hadoop环境变量
+   
+#### 配置环境变量
 
 在huatec01上配置环境变量，`vi /etc/profile`
 
-```bash
-# hadoop2.7.3
-export HADOOP_HOME=/huatec/hadoop-2.7.3
-export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+```
+ # hadoop2.7.3
+	export HADOOP_HOME=/huatec/hadoop-2.7.3
+	export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 ```
 
 执行`source /etc/profile`
 
 拷贝
 
-```bash
-scp -r /etc/profile root@huatec02:/etc
-scp -r /etc/profile root@huatec03:/etc
-scp -r /etc/profile root@huatec04:/etc
-scp -r /etc/profile root@huatec05:/etc
-```
-
+    scp -r /etc/profile root@huatec02:/etc
+    scp -r /etc/profile root@huatec03:/etc
+    scp -r /etc/profile root@huatec04:/etc
+    scp -r /etc/profile root@huatec05:/etc
+    
 分别执行`source /etc/profile`
-
-### 初次启动Hadoop
+    
+#### 初次启动
 
 1、启动zookeeper集群
 
 03、04、05分别执行
 
 以05为例
-
-```bash
+```
 [root@huatec05 ~]# zkServer.sh start
 [root@huatec05 ~]# jps
 2239 QuorumPeerMain
@@ -434,8 +438,7 @@ scp -r /etc/profile root@huatec05:/etc
 03、04、05分别执行
 
 以05为例
-
-```bash
+```
 [root@huatec05 ~]# hadoop-daemon.sh start journalnode
 [root@huatec05 ~]# jps
 2239 QuorumPeerMain
@@ -447,8 +450,9 @@ scp -r /etc/profile root@huatec05:/etc
 
 01执行
 
-```bash
+```
 [root@huatec01 ~]# hdfs namenode –format
+
 [root@huatec01 ~]# scp -r tmp/ huatec02:/huatec/hadoop-2.7.3/
 ```
 
@@ -456,7 +460,7 @@ scp -r /etc/profile root@huatec05:/etc
 
 4、格式化ZK
 
-```bash
+```
 [root@huatec01 ~]# hdfs zkfc -formatZK
 ```
 
@@ -464,7 +468,7 @@ scp -r /etc/profile root@huatec05:/etc
 
 01执行
 
-```bash
+```
 [root@huatec01 ~]# start-dfs.sh
 ```
 
@@ -472,39 +476,32 @@ scp -r /etc/profile root@huatec05:/etc
 
 01执行
 
-```bash
+```
 [root@huatec01 ~]# start-yarn.sh
 [root@huatec02 ~]# yarn-daemon.sh start resourcemanager
 ```
 
 浏览器访问验证：
 HDFS
-
 http://huatec01:50070
-
 http://huatec02:50070
 
 MapReduce
-
 http://huatec01:8088
-
 http://huatec02:8088
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/23.png)
+![23.png](https://upload-images.jianshu.io/upload_images/5637154-427867b8236a8e33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![26.png](https://upload-images.jianshu.io/upload_images/5637154-b2cb53ec4b7550f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![24.png](https://upload-images.jianshu.io/upload_images/5637154-8d828355e7e8872a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/26.png)
-
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/24.png)
-
-### 后续启动
+#### 后续启动
 
 1、启动zookeeper集群
 
 03、04、05分别执行
 
 以05为例
-
-```bash
+```
 [root@huatec05 ~]# zkServer.sh start
 [root@huatec05 ~]# jps
 2239 QuorumPeerMain
@@ -515,7 +512,7 @@ http://huatec02:8088
 
 01执行
 
-```bash
+```
 [root@huatec01 ~]# start-dfs.sh
 ```
 
@@ -523,20 +520,20 @@ http://huatec02:8088
 
 01执行
 
-```bash
+```
 [root@huatec01 ~]# start-yarn.sh
 [root@huatec02 ~]# yarn-daemon.sh start resourcemanager
 ```
 
-## HBase安装
+### HBase安装
 
 将hbase下载到本机，修改配置文件，然后拷贝到所有节点，并配置环境变量。
 
-### 修改HBase配置文件
+#### 修改配置文件
 
 1、hbase-env.sh
 
-```bash
+```
 //指定jdk
 export JAVA_HOME=/usr/java/jdk1.7.0_55
 //告诉hbase使用外部的zk，将值设置为false
@@ -545,7 +542,7 @@ export HBASE_MANAGES_ZK=false
 
 2、hbase-site.xml
 
-```bash
+```
 <configuration>
     <!-- 指定hbase在HDFS上存储的路径 -->
     <property>
@@ -568,7 +565,7 @@ export HBASE_MANAGES_ZK=false
 
 3、regionservers
 
-```bash
+```
 huatec03
 huatec04
 huatec05
@@ -578,9 +575,9 @@ huatec05
 
 因为HBase底层依赖HDFS，我们需要配置两个与Hadoop相关的文件hdfs-site.xml和core-site.xml，为了方便起见，我们直接拷贝Hadoop配置文件中的hdfs-site.xml和core-site.xml, 放到hbase/conf下。
 
-### 配置HBase环境变量
+#### 拷贝和配置环境变量
 
-```bash
+```
  scp -r hbase-1.2.6 root@huatec01:/huatec
  scp -r hbase-1.2.6 root@huatec02:/huatec
  scp -r hbase-1.2.6 root@huatec03:/huatec
@@ -590,24 +587,24 @@ huatec05
 
 在01上配置环境变量，然后拷贝
 
-```bash
+```
 scp -r /etc/profile root@huatec02:/etc
 scp -r /etc/profile root@huatec03:/etc
 scp -r /etc/profile root@huatec04:/etc
 scp -r /etc/profile root@huatec05:/etc
 ```
 
-### 启动HBase集群
+#### 启动集群
 
 01执行
 
-```bash
+```
 start-hbase.sh
 ```
 
 02执行 for HBase HA
 
-```bash
+```
 hbase-daemon.sh start master
 ```
 
@@ -615,8 +612,8 @@ hbase-daemon.sh start master
 
 `http://huatec01:16010`
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/27.png)
+![27.png](https://upload-images.jianshu.io/upload_images/5637154-1df28323e7ca36b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 `http://huatec02:16010`
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/28.png)
+![28.png](https://upload-images.jianshu.io/upload_images/5637154-bc7c9d3215e684af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)

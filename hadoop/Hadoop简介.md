@@ -1,4 +1,4 @@
-# Hadoop 概述
+# Hadoop简介
 
 ## Hadoop的作者和起源
 
@@ -8,7 +8,7 @@
 
 ## 什么是Hadoop
 
-What Is Apache Hadoop?
+>What Is Apache Hadoop?
 The Apache™ Hadoop® project develops open-source software for reliable, scalable, distributed computing.
 
 - Hadoop是Apache软件基金会旗下的一个开源分布式计算平台，为用户提供了系统底层细节透明的分布式基础架构。
@@ -28,38 +28,35 @@ hadoop擅长日志分析，facebook就用Hive来进行日志分析，2009年时f
 ## Hadoop发展简史
 
 - Hadoop最初是由Apache Lucene项目的创始人Doug Cutting开发的一个文本搜索库，源自始于2002年的一个开源Apache Nutch项目，它是一个开源的网络搜索引擎并且也是Lucene项目的一部分。在2004年，Nutch项目模仿GFS（Google File System）开发了自己的分布式文件系统NDFS（Nutch Distributed File System），也就是HDFS的前身。同年，谷歌公司发表了另一篇具有深远影响的论文，阐述了MapReduce分布式编程思想。
+
 - 在2005年，Nutch项目团队参考MapReduce分布式编程思想开发了MapReduce分布式处理框架。
+
 - 2006年2月，Nutch项目将NDFS和MapReduce独立出来，使其成为Lucene项目的一个子项目，命名为Hadoop。
+
 - 2008年1月，Hadoop正式成为Apache顶级项目，并逐渐被雅虎、FaceBook等大公司采用。
+
 - 2008年4月，Hadoop打破世界纪录，成为最快排序1TB数据的系统，它采用一个由910个节点构成的集群进行运算，排序时间只用了209秒。并于2009年，将这个排序时间缩短到62秒。Hadoop从此名声大震，迅速发展成为大数据时代最具影响力的开源分布式开发平台。
 
 ## Hadoop的特点
 
 Hadoop是一个能够对大量数据进行分布式处理的软件框架，并且是以一种可靠、高效、可伸缩的方式进行处理的，它具有以下几个方面的特性：
 
-- 高可靠性（Reliable）
-  
+- 高可靠性（Reliable）。
 > hadoop能自动地维护数据的多份副本，并且在任务失败后能自动地重新部署（redeploy）计算任务。
 
 - 高效率（Efficient）。
-  
 > 通过分发数据，hadoop可以在数据所在的节点上并行地（parallel）处理它们，这使得处理非常的快速。
 
-- 高可扩展性
-  
+- 高可扩展性。
 > 集群大小可扩展，核心进程例如NameNode、DataNode也可扩展。
 
-- 高容错性
-  
+- 高容错性。
 > 分布式存储，数据多副本，分布式计算。
 
-- 成本低（Economical）
-  
+- 成本低（Economical）。
 > 可以通过普通机器组成的服务器群来分发以及处理数据。这些服务器群总计可达数千个节点。
 
-- 扩容能力（Scalable）
-  
-> 能可靠地（reliably）存储和处理千兆字节（PB）数据。
+- 扩容能力（Scalable）：能可靠地（reliably）存储和处理千兆字节（PB）数据。
 
 - 运行在Linux平台上
 

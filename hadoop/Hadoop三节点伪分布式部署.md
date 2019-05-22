@@ -1,6 +1,6 @@
-# Hadoop伪分布式部署（3Node）
+# Hadoop三节点伪分布式部署
 
-非HA，不依赖zookeeper。
+非HA，不依赖zookeeper
 
 ## 修改配置文件
 
@@ -9,6 +9,8 @@
 ```bash
 export JAVA_HOME=/usr/local/java/jdk1.8.0_65
 ```
+
+<!--more-->
 
 2、slave
 
@@ -157,7 +159,5 @@ slave2
 ```
 
 浏览器访问：
-
 hdfs:   `http://master:50070/`
-
 mapreduce:  `http://master:8088/`

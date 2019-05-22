@@ -1,4 +1,4 @@
-# Hive单节点部署
+# Hive伪分布式部署
 
 ## 安装说明
 
@@ -10,7 +10,7 @@
 
 ## 安装步骤
 
-### 安装Hive
+### 1.安装
 
 我们统一和前面的大数据软件安装到统一个目录下，方便管理。
 
@@ -18,7 +18,7 @@
 [root@huatec01 ~]# tar -xvf apache-hive-2.1.1-bin.tar -C /huatec/
 ```
 
-### 配置Hive环境变量
+### 2.配置环境变量
 
 ```bash
 [root@huatec01 bin]# vi /etc/profile
@@ -30,11 +30,9 @@ export PATH=$PATH:$HIVE_HOME/bin
 
 执行`source /etc/profile`使配置生效。
 
-### 安装元数据库MySQL
+### 3.安装元数据库MySQL
 
 这里我们使用MySQL作为元数据库，我们在huatec01节点上安装MySQL。
-
-[安装步骤参考文章](http://note.youdao.com/noteshare?id=8a57c3b8f53bddbbeada1435cf0b607a)
 
 安装完MySQL 后，进入mysql shell，执行
 
@@ -44,7 +42,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION
 
 说明：第一个*表示任何数据库，第二个*表示所有表，%表示任何ip都可以访问。
 
-### 修改Hive配置文件
+### 4.配置Hive
 
 - hive-env.sh
 
@@ -134,9 +132,7 @@ hwi服务的启动需要依赖`hive-hwi-2.1.1.jar`，这个jar包在`$HIVE_HOME/
 
 我们需要将数据库连接驱动`mysql-connector-java-5.1.42-bin.jar`添加到hive安装路径的lib目录。
 
-## 启动Hive
-
-### 初始化元数据库
+### 5.初始化元数据库
 
 第一次启动Hive的时候，我们需要初始化元数据库。
 
@@ -144,15 +140,19 @@ hwi服务的启动需要依赖`hive-hwi-2.1.1.jar`，这个jar包在`$HIVE_HOME/
 [root@huatec01 bin]# ./schematool -initSchema -dbType mysql
 ```
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/47.png)
+![47.png](https://upload-images.jianshu.io/upload_images/5637154-5a419769b9d72e63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 当控制台输出“schemaTool  completed”日志，表明元数据库初始化成功。
 
-### 进入Hive shell
+### 6.进入Hive shell
 
 我们运行指令“hive”即可进入hive shell模式
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/48.png)
+![48.png](https://upload-images.jianshu.io/upload_images/5637154-0773ac7ecd0ef3c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+至此，我们的Hive伪分布式部署完成！
 
 ## 入门操作
 
@@ -163,21 +163,22 @@ hive > create table trade_detail (id bigint, account string, income double, expe
 ```
 
 当我们在hive创建一张表时，首先会在mysql保存表的描述信息（表名、存储位置分配、列等信息），然后在hdfs上创建一个目录。
+[图片上传中...(53.png-7b0871-1557452312722-0)]
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/49.png)
+![49.png](https://upload-images.jianshu.io/upload_images/5637154-2ec5e91df882d17e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 我们连接元数据库，发现数据库中多出了很多表，如下图所示：
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/50.png)
+![50.png](https://upload-images.jianshu.io/upload_images/5637154-b0e75d1600c22158.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 在TBLS表中，保存了我们的表名、表的类型信息,如下图所示：
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/51.png)
+![51.png](https://upload-images.jianshu.io/upload_images/5637154-f8dcf721469c2a5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 在COLIUMNS_V2表中，保存了表的字段信息,如下图所示：
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/52.png)
+![52.png](https://upload-images.jianshu.io/upload_images/5637154-de0c67a3697c810a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 我们访问HDFS，发现多了一个目录“/user/hive/warehouse/trade_detail”，如下图所示：
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/53.png)
+![53.png](https://upload-images.jianshu.io/upload_images/5637154-cc4a8ac4de658bd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)

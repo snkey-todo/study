@@ -1,4 +1,4 @@
-# Hive案例：wordcount
+# Hive07-wordcount案例
 
 ## 启动集群
 
@@ -10,7 +10,7 @@
 2532 Jps
 2454 ResourceManager
 2333 DFSZKFailoverController
-[root@huatec01 ~]#
+[root@huatec01 ~]# 
 ```
 
 ## 准备数据源
@@ -23,8 +23,7 @@ username limei
 ...
 ```
 
-单词之间的分隔符为' '，也就是一个空格。
-然后将两个文件上传到huatec01:/home/input/目录下，因为我们的Hive就安装在huatec01上。
+单词之间的分隔符为' '，也就是一个空格。然后将两个文件上传到huatec01:/home/input/目录下，因为我们的Hive就安装在huatec01上。
 
 ```bash
 ➜  项目6 scp wc* root@huatec01:/home/input
@@ -47,7 +46,7 @@ Found 2 items
 
 ## 启动Hive并统计词频
 
-1、导入数据
+1. 导入数据
 
 ```bash
 hive> create table docs(line string);
@@ -57,10 +56,9 @@ hive> load data inpath '/input' overwrite into table docs;
 Loading data to table default.docs
 OK
 Time taken: 0.795 seconds
-
 ```
 
-2、分析数据
+2. 分析数据
 
 编写数据分析Hive QL语句
 
@@ -71,10 +69,9 @@ hive> create table word_count as
     > group by word 
     > order by word;
 ```
-
 执行效果如下图所示：
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/46.png)
+![46.png](https://upload-images.jianshu.io/upload_images/5637154-8e59646e3cd10132.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 从图中我们可以看出，我们的Hive QL语句转换为了MapReduce任务，最后的数据保存到一个新的表“word_count”中，我们查询表数据如下所示：
 
@@ -95,3 +92,4 @@ Time taken: 0.152 seconds, Fetched: 10 row(s)
 ```
 
 我们看到测试结果是成功的，我们的词频统计已经完成了，完成了编写MapReduce代码相同的功能。
+

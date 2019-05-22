@@ -1,4 +1,4 @@
-# Hadoop 伪分布式部署
+# Hadoop伪分布式部署
 
 Hadoop的伪分布式环境搭建，也就是在单个节点上进行部署。
 
@@ -28,7 +28,7 @@ Oct 12 22:54:57 huatec01 systemd[1]: Stopped firewalld - dynamic firewall daemon
 
 在关闭firewalld防火墙之前，我们需要先systemctl stop firewalld来停止防火墙，避免其已经处于运行状态，导致关闭失败，然后调用systemctl disable firewalld让其彻底不可用。最后，我们执行systemctl status firewalld指令查看防火墙是否关闭成功。我们从上述的代码中可以看到最后的防火墙状态是inactive (dead)，说明操作成功。
 
-#### 关闭selinux防火强（拓展）
+#### 关闭selinux防火墙（拓展）
 
 ```bash
 [root@huatec01 ~]# vi /etc/sysconfig/selinux
@@ -259,8 +259,8 @@ stop-yarn.sh
 
 通过`http://192.168.14.101:50070`或`http://huatec01:50070`访问Hadoop管理界面
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/23.png)
+![image](http://upload-images.jianshu.io/upload_images/5637154-23d535c0c5c1722d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 通过`http://192.168.14.101:8088`或`http://huatec01:8088`访问MapReduce管理界面
 
-![image](https://raw.githubusercontent.com/zhusheng/blog/master/24.png)
+![image](http://upload-images.jianshu.io/upload_images/5637154-a9a2b11adcc9ac7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
