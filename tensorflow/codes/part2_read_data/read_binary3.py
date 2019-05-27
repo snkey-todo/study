@@ -1,5 +1,6 @@
 import tensorflow as tf
 import os
+from part2_read_data.TFRecord import CifarRead
 
 """
 
@@ -13,47 +14,18 @@ tf.app.flags.DEFINE_string("cifar_dir", "/Users/zhusheng/WorkSpace/Tmp/dataset/c
 tf.app.flags.DEFINE_string("cifar_tfrecords", "./tmp/cifar.tfrecords", "存进tfrecords的文件")
 
 
-image_bytes = 32 * 32 * 3
-
-def read_from_tfrecords(file_path):
-    """
-    读取tfrecords
-    :return: None
-    """
-    file_queue = tf.train.string_input_producer([file_path, ])
-
-    reader = tf.TFRecordReader()
-
-    key, value = reader.read(file_queue)
-
-    features = tf.parse_single_example(value, features={
-        "image": tf.FixedLenFeature([], tf.string),
-        "label": tf.FixedLenFeature([], tf.int64),
-    })
-    # 对读取的内容进行解码
-    image = tf.decode_raw(features["image"], tf.uint8)
-
-    # 设置静态形状，可用于转换动态形状
-    image.set_shape([image_bytes])
-    print(image)
-
-    image_tensor = tf.reshape(image, [32, 32, 3])
-    print(image_tensor)
-
-    label = tf.cast(features["label"], tf.int32)
-    print(label)
-
-    image_batch, label_batch = tf.train.batch([image_tensor, label], batch_size=10, num_threads=1, capacity=10)
-    print(image_batch)
-    print(label_batch)
-
-    return image_batch, label_batch
-
 
 if __name__=="__main__":
+    # 找到文件，放入列表   路径+名字  ->列表当中
+    file_name = os.listdir(FLAGS.cifar_dir)
+    # 下载的数据集中，有一个test_batch.bin，我改了一下名称为test_batch.binn,方便删选
+    # 取出后缀为bin的文件
+    file_list = [os.path.join(FLAGS.cifar_dir, file) for file in file_name if file[-3:] == "bin"]
+    print(file_list)
 
     # 从TFRecord文件中读取数据，首先得有这个文件，我们先往里面保存数据。
-    image_batch, label_batch = read_from_tfrecords(FLAGS.cifar_tfrecords)
+    cif = CifarRead(file_list)
+    image_batch, label_batch = cif.read_from_tfrecords(FLAGS.cifar_tfrecords)
 
     with tf.Session() as sess:
         coord = tf.train.Coordinator()
