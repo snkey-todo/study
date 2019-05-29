@@ -3,6 +3,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string("data_dir", "/Users/zhusheng/WorkSpace/Tmp/dataset/Mnist", "mnist数据集")
+# 默认是进行训练
 tf.app.flags.DEFINE_integer("is_train", 1, "指定程序是预测还是训练")
 """
 全连接层，有多少个特征就有多少个输出
@@ -42,11 +43,13 @@ def full_connected():
 
     # 5、计算准确率
     with tf.variable_scope("acc"):
-
+        # 真实值与预测值的对比，返回的是true or false
         equal_list = tf.equal(tf.argmax(y_true, 1), tf.argmax(y_predict, 1))
+        print("equal_list:", equal_list)
 
         # equal_list  None个样本   [1, 0, 1, 0, 1, 1,..........]
         accuracy = tf.reduce_mean(tf.cast(equal_list, tf.float32))
+        print("accuracy:", accuracy)
 
     # 收集变量 单个数字值收集
     tf.summary.scalar("losses", loss)
@@ -73,6 +76,7 @@ def full_connected():
         # 建立events文件，然后写入
         filewriter = tf.summary.FileWriter("./tmp/summary/test/", graph=sess.graph)
 
+        # 训练
         if FLAGS.is_train == 1:
 
             # 迭代步数去训练，更新参数预测
@@ -86,13 +90,14 @@ def full_connected():
 
                 # 写入每步训练的值
                 summary = sess.run(merged, feed_dict={x: mnist_x, y_true: mnist_y})
-
                 filewriter.add_summary(summary, i)
 
                 print("训练第%d步,准确率为:%f" % (i, sess.run(accuracy, feed_dict={x: mnist_x, y_true: mnist_y})))
 
             # 保存模型
             saver.save(sess, "./tmp/ckpt/fc_model")
+
+        # 预测
         else:
             # 加载模型
             saver.restore(sess, "./tmp/ckpt/fc_model")
