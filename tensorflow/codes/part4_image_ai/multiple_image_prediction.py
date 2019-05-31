@@ -6,7 +6,7 @@ execution_path = os.getcwd()
 
 multiple_prediction = ImagePrediction()
 multiple_prediction.setModelTypeAsDenseNet()
-multiple_prediction.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/DenseNet-BC-121-32.h5")
+multiple_prediction.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/DenseNet-BC-121-32.h5")
 multiple_prediction.loadModel()
 
 

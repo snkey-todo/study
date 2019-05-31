@@ -6,7 +6,7 @@ execution_path = os.getcwd()
 # 指定模型
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
-detector.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/yolo.h5")
+detector.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/yolo.h5")
 detector.loadModel()
 
 """

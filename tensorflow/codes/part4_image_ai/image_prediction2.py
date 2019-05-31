@@ -8,7 +8,7 @@ prediction = ImagePrediction()
 # 指定图片预测算法模型
 prediction.setModelTypeAsResNet()
 # 算法模型所在的路径
-prediction.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/resnet50_weights_tf_dim_ordering_tf_kernels.h5")
+prediction.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/resnet50_weights_tf_dim_ordering_tf_kernels.h5")
 
 # 加载模型
 prediction.loadModel()

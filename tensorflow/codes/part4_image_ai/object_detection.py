@@ -6,7 +6,7 @@ execution_path = os.getcwd()
 # 指定预测模型
 detector = ObjectDetection()
 detector.setModelTypeAsRetinaNet()
-detector.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/resnet50_coco_best_v2.0.1.h5")
+detector.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/resnet50_coco_best_v2.0.1.h5")
 detector.loadModel()
 
 

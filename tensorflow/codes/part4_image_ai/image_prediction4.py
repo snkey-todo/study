@@ -8,7 +8,7 @@ prediction = ImagePrediction()
 # 指定图片预测算法模型
 prediction.setModelTypeAsDenseNet()
 # 算法模型所在的路径
-prediction.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/DenseNet-BC-121-32.h5")
+prediction.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/DenseNet-BC-121-32.h5")
 
 # 加载模型
 prediction.loadModel()

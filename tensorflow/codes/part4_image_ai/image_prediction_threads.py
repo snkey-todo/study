@@ -5,7 +5,7 @@ execution_paht = os.getcwd()
 
 thread_prediction = ImagePrediction()
 thread_prediction.setModelTypeAsResNet()
-thread_prediction.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/resnet50_weights_tf_dim_ordering_tf_kernels.h5")
+thread_prediction.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/resnet50_weights_tf_dim_ordering_tf_kernels.h5")
 
 all_image_array = []
 

@@ -26,7 +26,7 @@ def forMinute(minute_number, output_arrays, count_arrays, average_output_count):
 
 detector = VideoObjectDetection()
 detector.setModelTypeAsYOLOv3()
-detector.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/yolo.h5")
+detector.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/yolo.h5")
 detector.loadModel()
 
 # 自定义预测对象

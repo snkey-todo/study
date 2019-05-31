@@ -5,7 +5,7 @@ execution_path = os.getcwd()
 
 detector = VideoObjectDetection()
 detector.setModelTypeAsRetinaNet()
-detector.setModelPath("/Users/zhusheng/WorkSpace/yingcloudDev/code/resnet50_coco_best_v2.0.1.h5")
+detector.setModelPath("/Users/zhusheng/WorkSpace/Tmp/dataset/models/resnet50_coco_best_v2.0.1.h5")
 detector.loadModel()
 
 # 自定义预测对象
